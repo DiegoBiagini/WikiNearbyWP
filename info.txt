@@ -1,0 +1,23 @@
+Studente: Diego Biagini, Alessio Poggiani
+
+
+Progetto: sviluppo di un plugin wordpress per il turismo che consenta l’aggiunta di una localizzazione ad un post/pagina e visualizzi luoghi suggeriti nelle vicinanze su di essa via wikipedia
+
+
+
+Riferimenti:
+
+- https://codex.wordpress.org/Writing_a_Plugin
+- Wikipedia api
+
+
+
+Prima di procedere all’implementazione fare progettazione (carta e penna) o con software di prototyping
+
+
+Strumenti mockup: Mockflow [Progettazione - Da concordare prima dello sviluppo]
+
+Esame: relazione elaborato, presentazione PPT, software in dropbox
+
+
+
