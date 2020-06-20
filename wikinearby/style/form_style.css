@@ -1,0 +1,8 @@
+.wikinearby_form input:invalid {
+	border: 1px solid #d66;
+	border-radius: 5px;
+}
+
+.wikinearby_form input:focus {
+	border: 0px;
+}

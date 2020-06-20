@@ -69,6 +69,7 @@ class WikiNearby_widget extends WP_Widget {
 		$shortcode = '[wikinearby id='.substr($this->id, strlen($this->id_base) + 1).']';
 
 		?>
+		<div class="wikinearby_form">
 		<p>
 		<label for="<?php echo esc_attr( $this->get_field_id( 'location_name' ) ); ?>">Location name:</label> 
 		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'location_name' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'location_name' ) ); ?>" type="text" value="<?php echo esc_attr( $location_name ); ?>" required>
@@ -86,7 +87,7 @@ class WikiNearby_widget extends WP_Widget {
 
 		<p>
 		<label for="<?php echo esc_attr( $this->get_field_id( 'km_range' ) ); ?>">Maximum distance of interesting places(in kilometers):</label> 
-		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'km_range' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'km_range' ) ); ?>" type="number" step="1" min="1" max="100" value="<?php echo esc_attr( $km_range ); ?>">
+		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'km_range' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'km_range' ) ); ?>" type="number" step="1" min="1" max="100" value="<?php echo esc_attr( $km_range ); ?>" required>
 		</p>
 
         <p>
@@ -109,6 +110,7 @@ class WikiNearby_widget extends WP_Widget {
 		<label for="<?php echo esc_attr( $this->get_field_id( 'shortcode' ) ); ?>">Shortcode:</label> 
 		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'shortcode' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'shortcode' ) ); ?>" type="text" value="<?php echo esc_attr($shortcode)?>" readonly>
 		</p>
+		</div>
 
 		<?php 
 	}
@@ -148,7 +150,9 @@ class WikiNearby_widget extends WP_Widget {
     public function scripts(){
         wp_enqueue_script( 'media-upload' );
         wp_enqueue_media();
-        wp_enqueue_script('mediapicker',  plugin_dir_url( __FILE__ ).'js/mediapicker.js' , array('jquery'));
+        wp_enqueue_script('form_functions',  plugin_dir_url( __FILE__ ).'js/form_functions.js' , array('jquery'));
+		
+		wp_localize_script('form_functions', 'data', array('stylesheets' => plugin_dir_url( __FILE__ ).'style/'));
         
     }
 }
