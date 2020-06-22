@@ -13,7 +13,7 @@ if(!class_exists('WP_List_Table')){
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 include(plugin_dir_path( __FILE__ ).'/menu.php');
-include(plugin_dir_path( __FILE__ ).'/add_location_submenu.php');
+include(plugin_dir_path( __FILE__ ).'/edit_location_submenu.php');
 
 
 class Saved_Locations {
@@ -36,6 +36,10 @@ class Saved_Locations {
     public function delete_location($id){
         unset($this->locations[$id]);
     }
+	
+	public function update_location($id, $new_location){
+		$this->locations[$id] = $new_location;
+	}
 
     public function print_locations(){
 
@@ -49,13 +53,14 @@ class Saved_Locations {
         foreach($this->locations as $w){
             if($w->id == $id)
                 return $w;
-        }    
+        }
+		return null;
     }
 
     public function print_locations_table(){
 
 ?>
-<table class="widefat fixed">
+<table style="width:95%" class="widefat fixed">
     <thead>
         <tr>
             <th>Location</th>
@@ -107,7 +112,10 @@ class Location {
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['latitude'])."</td>";
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['km_range'])."</td>";
         echo "<td class='manage-column column-columnname'>".esc_html( '[wikinearby id='.$this->id.']')."</td>";
-        echo "<td class='manage-column column-columnname'>".'<a href="#">'.esc_html('Modify location').'</a>'."</td>";
+        echo "<td class='manage-column column-columnname'>";
+		echo '<a class="dashicons-before dashicons-edit-large" href="'.esc_html(get_admin_url().'admin.php?page=edit-location-submenu&id='.$this->id).'"></a>';
+		echo '<a class="dashicons-before dashicons-trash" href="'.esc_html(get_admin_url().'admin-post.php?action=delete_location&id='.$this->id).'"></a>';
+		echo "</td>";
 
         echo "</tr>";
 
@@ -143,13 +151,14 @@ function wikinearby_menu_page(){
         'manage_options',
         'wikinearby-menu',
         'wikinearby_menu',
+		plugin_dir_url(__FILE__ ).'assets/icon.png'
+		
     );
-    add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location', 'manage_options', 'add-location-submenu', 'add_location_submenu');
+    add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location', 'manage_options', 'edit-location-submenu', 'edit_location_submenu');
 }
 
 
-//Add post action
-add_action('admin_post_add_location', 'wikinearby_add_location');
+//Add post actions
 
 function wikinearby_add_location(){
     //Save it yo
@@ -165,8 +174,51 @@ function wikinearby_add_location(){
         update_option('wikinearby_saved_locations', $saved_locations);
     }
 
-    wp_redirect(get_admin_url().'admin.php?page=add-location-submenu');
+    wp_redirect(get_admin_url().'admin.php?page=edit-location-submenu');
 }
+
+add_action('admin_post_add_location', 'wikinearby_add_location');
+
+function wikinearby_edit_location(){
+    //Save it yo
+    unset($_POST['action']);
+    $loc = new Location($_POST);
+	$loc->id = $_POST['id'];
+
+    $saved_locations = get_option('wikinearby_saved_locations');
+    if($saved_locations === false)
+        echo "ERROR";
+    else{
+        $saved_locations->update_location($_POST['id'], $loc);
+
+        update_option('wikinearby_saved_locations', $saved_locations);
+    }
+
+    wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+}
+
+add_action('admin_post_edit_location', 'wikinearby_edit_location');
+
+function wikinearby_delete_location(){
+
+
+	$id = $_GET['id'];
+
+    $saved_locations = get_option('wikinearby_saved_locations');
+    if($saved_locations === false)
+        echo "ERROR";
+    else{
+        $saved_locations->delete_location($id);
+
+        update_option('wikinearby_saved_locations', $saved_locations);
+    }
+
+    wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+}
+
+add_action('admin_post_delete_location', 'wikinearby_delete_location');
+
+
 
 //Register media uploader
 
@@ -184,10 +236,8 @@ function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
     //Normalize
     $atts = array_change_key_case((array)$atts, CASE_LOWER);
 
-
     $wikinearby_atts = shortcode_atts(
         ['id' => '',] , $atts, $tag);
-    echo print_r($wikinearby_atts);
     
     if(empty($wikinearby_atts['id']))
         return 'Wrong shortcode';

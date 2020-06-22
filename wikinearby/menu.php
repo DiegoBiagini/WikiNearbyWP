@@ -18,5 +18,9 @@ function wikinearby_menu(){
 	}
 	else
 		$saved_locations->print_locations_table();
-
+	
+	
+	?>
+	<a style="margin-top:30px;" href="<?php echo esc_html(get_admin_url().'admin.php?page=edit-location-submenu');?>"> Add a new location</a>
+	<?php
 }
