@@ -1,0 +1,105 @@
+/* CSS file instructions*/
+
+/* START REGOLE GENERALI */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "PT Sans", Helvetica, "sans-serif";
+    font-size: 16px;
+    background: #FBFBFB;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* END REGOLE GENERALI */
+
+
+
+/* START REGOLE HEADER */
+
+.webpage {
+    position: relative;
+    width: 100%;
+}
+
+.header {
+    min-height: 200px;
+}
+
+.main-content-container{
+    width: 1300px;
+    padding: 0px 10px;
+    margin: 0 auto;
+}
+
+.main-content-wrapper {
+    min-height: 650px;
+    background-color: aqua;
+}
+
+.main-content-box {
+    width: 50%;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border: 3px solid #696969;
+    border-radius: 30px 20px;
+    box-shadow: 2px 2px #F0F0FC;
+}
+
+.fa-map-marker {
+    color: #696969;
+}
+
+.main-content-box>* {
+    padding: 25px 50px;
+}
+
+.main-content h1 {
+    float: left;
+}
+
+.main-content-box h3, .main-content-box h4{
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.nearby-place {
+    border-top: 2px solid #696969;
+    padding-top: 10px;
+}
+
+
+
+.nearby-place h3 {
+    text-align: justify;
+}
+
+.img-container img{
+    border-radius: 50%;
+    border: 2px solid #696969;
+    max-height: 150px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+/*
+.main-content {
+    
+}*/
+
+/* END REGOLE HEADER */
