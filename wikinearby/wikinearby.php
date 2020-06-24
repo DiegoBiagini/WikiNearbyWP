@@ -3,28 +3,28 @@
  * Plugin Name:       WikiNearby
  * Plugin URI:        https://example.com
  * Description:       A widget that allows you to add a location to a post/page and see nearby historical places
- * Version:           0.1
+ * Version:           0.2
  * Requires PHP:      7.2
  * Author:            Dgbad & Chry
  * Author URI:        https://author.example.com/
  */
 
-if(!class_exists('WP_List_Table')){
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
+// Includes
 include(plugin_dir_path( __FILE__ ).'/menu.php');
 include(plugin_dir_path( __FILE__ ).'/edit_location_submenu.php');
 
-
+// Class that will store a collection of Locations
 class Saved_Locations {
+	// Array of references to Locations
     public $locations;
+	// Id to keep track of new Locations
     public $prog_id;
 
     public function __construct(){
         $this->locations = array();
         $this->prog_id = 1;
     }
-
+	
     public function add_location($loc){
         $loc->id = $this->prog_id;
 
@@ -40,15 +40,8 @@ class Saved_Locations {
 	public function update_location($id, $new_location){
 		$this->locations[$id] = $new_location;
 	}
-
-    public function print_locations(){
-
-        foreach($this->locations as $w){
-            $w->display();
-        }
-
-    }
-
+	
+	// Returns a Location given its id
     public function get_location_by_id($id){
         foreach($this->locations as $w){
             if($w->id == $id)
@@ -56,7 +49,8 @@ class Saved_Locations {
         }
 		return null;
     }
-
+	
+	// Display the table of locations, used in admin page
     public function print_locations_table(){
 
 ?>
@@ -82,7 +76,9 @@ class Saved_Locations {
 
 }
 
+// Class that will store the data of a single location
 class Location {
+	// Array containing name, latitude, longitude, etc
     public $loc_data;
     public $id;
 
@@ -90,8 +86,35 @@ class Location {
         $this->loc_data = $data;
         $this->id = 0;
     }
-
+	
+	//Used to display on front end
     public function display(){
+		wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'style/wkn_style.css' );
+		wp_enqueue_style( 'wkn_style' );
+		?>
+		<div class="wkn-main-content-container">
+            <div class="wkn-main-content-wrapper">
+                <div class="wkn-main-content-box">
+                    <div class="wkn-main-content">
+                        <h1><span class="fa fa-map-marker" aria-hidden="true"></span></h1>
+                        <div class="wkn-img-container">
+                            <img class="wkn-img-place" src="<?php echo esc_url($this->loc_data['loc_image']) ?>">
+                        </div>
+                        <h3> <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
+                        <h4> ( <?php echo esc_html( $this->loc_data['latitude']).','.esc_html( $this->loc_data['longitude'])?> )</h4>                        
+                        <div class="nearby-place">
+                            <h3> Nearby Places</h3>
+                            <div class="nearby-place-container">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<?php
+		/*
 
         echo "Location:".esc_html( $this->loc_data['loc_name'])."<br>";
         echo "Longitude:".esc_html( $this->loc_data['longitude'])."<br>";
@@ -103,8 +126,11 @@ class Location {
         <img src="<?php echo esc_url($this->loc_data['loc_image']) ?>" />
         <?php 
         echo "Id:".$id;
+		
+		*/
     }
-
+	
+	// Used to display in admin page
     public function display_table(){
         echo "<tr>";
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['loc_name'])."</td>";
@@ -113,7 +139,9 @@ class Location {
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['km_range'])."</td>";
         echo "<td class='manage-column column-columnname'>".esc_html( '[wikinearby id='.$this->id.']')."</td>";
         echo "<td class='manage-column column-columnname'>";
+		// Button to edit location, sends a GET to edit-location-submenu with the id of the location you want to modify
 		echo '<a class="dashicons-before dashicons-edit-large" href="'.esc_html(get_admin_url().'admin.php?page=edit-location-submenu&id='.$this->id).'"></a>';
+		// Button to remove location, sends a GET to admin-post with the id of the location to remove
 		echo '<a class="dashicons-before dashicons-trash" href="'.esc_html(get_admin_url().'admin-post.php?action=delete_location&id='.$this->id).'"></a>';
 		echo "</td>";
 
@@ -137,10 +165,9 @@ function wikinearby_activate(){
 // Remove option
 function wikinearby_deactivate(){
     delete_option("wikinearby_saved_locations");
-
 }
 
-// Add main menu
+// Add menu
 
 add_action( 'admin_menu', 'wikinearby_menu_page' );
 
@@ -159,9 +186,9 @@ function wikinearby_menu_page(){
 
 
 //Add post actions
-
+// Called when a location is added, retrieves the Saved_Locations obj and adds a Location
+// Locations data is passed through POST
 function wikinearby_add_location(){
-    //Save it yo
     unset($_POST['action']);
     $loc = new Location($_POST);
 
@@ -179,6 +206,8 @@ function wikinearby_add_location(){
 
 add_action('admin_post_add_location', 'wikinearby_add_location');
 
+// Called when a location is modified, checks if the given location exists in the Saved_Locations, if it exists it updates it 
+// Modified parameters are passed through POST
 function wikinearby_edit_location(){
     //Save it yo
     unset($_POST['action']);
@@ -199,6 +228,7 @@ function wikinearby_edit_location(){
 
 add_action('admin_post_edit_location', 'wikinearby_edit_location');
 
+// Deletes a single location in Saved_Locations given its id, this id is passed through GET
 function wikinearby_delete_location(){
 
 
@@ -218,6 +248,15 @@ function wikinearby_delete_location(){
 
 add_action('admin_post_delete_location', 'wikinearby_delete_location');
 
+// Deletes all locations by reinitializing the Saved_Locations object
+function wikinearby_delete_all_location(){
+
+	update_option('wikinearby_saved_locations', new Saved_Locations());
+
+    wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+}
+
+add_action('admin_post_delete_all', 'wikinearby_delete_all_location');
 
 
 //Register media uploader
@@ -231,7 +270,7 @@ function media_uploader_enqueue() {
 add_action('admin_enqueue_scripts', 'media_uploader_enqueue');
 
 
-// Add shortcode
+// Add shortcode, checks if the id is inside the Saved_Locations objects, if it's found it returns the displayed Location
 function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
     //Normalize
     $atts = array_change_key_case((array)$atts, CASE_LOWER);
@@ -252,7 +291,12 @@ function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
         $found_loc =  $saved_locations->get_location_by_id($given_id);
 		if($found_loc === null)
 			return 'No location found';
-        return $found_loc->display();
+		
+		ob_start(); 
+		$found_loc->display();
+        $output = ob_get_contents();
+        ob_end_clean();
+        return $output;
     }
 
 }

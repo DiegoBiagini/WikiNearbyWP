@@ -22,5 +22,6 @@ function wikinearby_menu(){
 	
 	?>
 	<a style="margin-top:30px;" href="<?php echo esc_html(get_admin_url().'admin.php?page=edit-location-submenu');?>"> Add a new location</a>
+	<a style="color:red; display:block;" href="<?php echo esc_html(get_admin_url().'admin-post.php?action=delete_all'); ?>">Delete all locations</a>
 	<?php
 }

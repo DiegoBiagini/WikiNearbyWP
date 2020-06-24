@@ -5,7 +5,7 @@ function edit_location_submenu(){
 	wp_register_style( 'form_style', plugin_dir_url( __FILE__ ).'style/form_style.css' );
 	wp_enqueue_style( 'form_style' );
 	
-	// Check if it came from the edit link
+	// Check if it came from the edit link, if this is true initialize the fields to the given Location
 	$editing = false;
 	$selected_location = null;
 	if($_GET['id'] != 0) {
@@ -65,6 +65,7 @@ function edit_location_submenu(){
 		
 		<input class='button button-primary' type='submit' name='submit' value='<?php echo($editing? 'Apply' : 'Add location');?> '>
 	</form>
+	<a href="<?php echo esc_html(get_admin_url().'admin.php?page=wikinearby-menu');?>"> Go back to locations</a>
 	<?php
 	
 }
