@@ -1,0 +1,12 @@
+\section*{Introduzione}
+Il progetto che è stato realizzato è un plugin per il CMS Wordpress, che abbiamo scelto di chiamare WikiNearby.\\
+Lo scopo di questo plugin è quello di offrire agli sviluppatori di un sito web incentrato sul turismo la possibilità di inserire un widget dentro a post o pagine Wordpress per visualizzare i luoghi di interesse culturale vicini ad un luogo geografico inserito a priori.\\\\
+Per poter recuperare le informazioni circa i luoghi di interesse sarà consultato il database di articoli Wikipedia, questo è fatto attraverso una particolare API di Wikipedia, GeoData, la quale si occupa principalmente di organizzare certe pagine(per esempio di monumenti,musei, etc.) assegnandogli delle coordinate.\\
+Oltre a questo permette di consultare informazioni sui luoghi vicini a una coordinata geografica inviata dall'utente.\\\\
+Le tecnologie usate per la realizzazione di questo applicativo sono tutte quelle trattate a lezione, ovvero PHP e Wordpress API per realizzare l'interfacciamento tra utente Wordpress e plugin, nonchè HTML5 e CSS3 per la visualizzazione dell'applicativo e infine Javascript, JQuery e AJAX per rendere interattivo lo strumento e per recuperare le informazioni necessarie da Wikipedia.\\\\
+Il lavoro è stato diviso principalmente in due parti: 
+\begin{itemize}
+    \item Realizzazione di una pagina "statica" che adempie al suo obiettivo a fronte di un luogo definito, cioè visualizzare i luoghi di interesse vicino ad esso
+    \item Realizzazione dell'infrastruttura di plugin Wordpress che consente al proprietario di un sito di aggiungere molteplici luoghi, per poter poi visualizzare lo widget applicato su quel particolare luogo
+\end{itemize}
+Infine le due parti sono state fuse insieme per rendere il plugin funzionante.
