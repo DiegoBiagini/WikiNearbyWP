@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
     
     var div = document.getElementById("wkn-nearby-wrap");
     
@@ -52,10 +52,42 @@ $(function() {
                 },
             
             success: function(response){
-                        console.log(JSON.stringify(response));
+                        var result = response["query"].pages;
+                        var keyValue = Object.keys(result);
+                        var title, image, coords;
+                        var container, imageContainer;
+                
+                        if(Object.keys(result).length == 0) {
+                           div.innerHTML += "The request retun 0 places.";
+                        }
+
+                        for(var i=0; i < Object.keys(result).length; i++) {
+                            container = document.createElement("div");
+                            imageContainer = document.createElement("div");
+                            title = document.createElement("h3");
+                            image = document.createElement("img");
+                            coords = document.createElement("h4");
+                            container.setAttribute("id","wkn-postid-" + keyValue[i]);
+                            imageContainer.classList.add("wkn-img-container");
+                            div.appendChild(container);
+                            container.appendChild(imageContainer);
+                            imageContainer.appendChild(image);
+                            container.appendChild(title);
+                            container.appendChild(coords);
+                            title.innerHTML += result[keyValue[i]]["title"];
+                            coords.innerHTML += "X : " + result[keyValue[i]]["coordinates"]["0"]["lat"];
+                            coords.innerHTML += "  Y : " + result[keyValue[i]]["coordinates"]["0"]["lon"];
+                            if(result[keyValue[i]].hasOwnProperty("thumbnail")){
+                                image.setAttribute("src",result[keyValue[i]]["thumbnail"]["source"]);
+                            } else {
+                                image.setAttribute("src","image/image.png");
+                            }
+                        }
                     },
+            
             error: function(error){
                         console.log(error);
+                        div.innerHTML("Unknown error during the request.");
                     }
         });
     }

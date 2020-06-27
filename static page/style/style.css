@@ -82,9 +82,7 @@ img {
     padding-top: 10px;
 }
 
-
-
-.wkn-nearby-place h3 {
+.wkn-nearby-place h3:first-child {
     text-align: justify;
 }
 
