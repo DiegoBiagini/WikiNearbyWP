@@ -1,5 +1,7 @@
 $(document).ready(function() {
     
+    var lat, lon, max_dist;
+    
     var div = document.getElementById("wkn-nearby-wrap");
     
     if (navigator.geolocation) {
@@ -31,7 +33,10 @@ $(document).ready(function() {
                 "latitude" : position.coords.latitude,
                 "longitude" : position.coords.longitude
             };   
-        
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        var my_coords = document.getElementById("wkn-my-coords");
+        my_coords.innerHTML += "X : " + positions.latitude + "  Y : " + positions.longitude;
         var url = "https://en.wikipedia.org/w/api.php";
         
         $.ajax({
@@ -53,9 +58,9 @@ $(document).ready(function() {
             
             success: function(response){
                         var result = response["query"].pages;
-                        var keyValue = Object.keys(result);
+                        var key_value = Object.keys(result);
                         var title, image, coords;
-                        var container, imageContainer;
+                        var container, image_container;
                 
                         if(Object.keys(result).length == 0) {
                            div.innerHTML += "The request retun 0 places.";
@@ -63,22 +68,23 @@ $(document).ready(function() {
 
                         for(var i=0; i < Object.keys(result).length; i++) {
                             container = document.createElement("div");
-                            imageContainer = document.createElement("div");
+                            image_container = document.createElement("div");
                             title = document.createElement("h3");
                             image = document.createElement("img");
                             coords = document.createElement("h4");
-                            container.setAttribute("id","wkn-postid-" + keyValue[i]);
-                            imageContainer.classList.add("wkn-img-container");
+                            container.setAttribute("id","wkn-postid-" + key_value[i]);
+                            image_container.classList.add("wkn-img-container");
                             div.appendChild(container);
-                            container.appendChild(imageContainer);
-                            imageContainer.appendChild(image);
+                            container.appendChild(image_container);
+                            image_container.appendChild(image);
                             container.appendChild(title);
                             container.appendChild(coords);
-                            title.innerHTML += result[keyValue[i]]["title"];
-                            coords.innerHTML += "X : " + result[keyValue[i]]["coordinates"]["0"]["lat"];
-                            coords.innerHTML += "  Y : " + result[keyValue[i]]["coordinates"]["0"]["lon"];
-                            if(result[keyValue[i]].hasOwnProperty("thumbnail")){
-                                image.setAttribute("src",result[keyValue[i]]["thumbnail"]["source"]);
+                            title.innerHTML += result[key_value[i]]["title"];
+                            coords.innerHTML += "X : " + result[key_value[i]]["coordinates"]["0"]["lat"];
+                            coords.innerHTML += "  Y : " + result[key_value[i]]["coordinates"]["0"]["lon"];
+                            coords.classList.add("wkn-postid-coords");
+                            if(result[key_value[i]].hasOwnProperty("thumbnail")){
+                                image.setAttribute("src",result[key_value[i]]["thumbnail"]["source"]);
                             } else {
                                 image.setAttribute("src","image/image.png");
                             }
