@@ -3,7 +3,7 @@
  * Plugin Name:       WikiNearby
  * Plugin URI:        https://example.com
  * Description:       A widget that allows you to add a location to a post/page and see nearby historical places
- * Version:           0.2
+ * Version:           0.3
  * Requires PHP:      7.2
  * Author:            Dgbad & Chry
  * Author URI:        https://author.example.com/
@@ -43,11 +43,7 @@ class Saved_Locations {
 	
 	// Returns a Location given its id
     public function get_location_by_id($id){
-        foreach($this->locations as $w){
-            if($w->id == $id)
-                return $w;
-        }
-		return null;
+		return $this->locations[$id];
     }
 	
 	// Display the table of locations, used in admin page
@@ -91,6 +87,26 @@ class Location {
     public function display(){
 		wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'style/wkn_style.css' );
 		wp_enqueue_style( 'wkn_style' );
+		
+		wp_register_style( 'fa_style', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" );
+		wp_enqueue_style("fa_style");
+		
+		
+		wp_register_script( 'wikinearby-apicall', plugin_dir_url( __FILE__ ).'js/wikinearby-apicall.js' );
+
+		// Localize the script with new data
+		$data_array = array(
+			'latitude' => $this->loc_data['latitude'],
+			'longitude' => $this->loc_data['longitude'],
+			'km_range' => $this->loc_data['km_range'],
+			'show_coord' => empty($this->loc_data['show_coord']) ? 0 : 1,
+			'pre_load' => empty($this->loc_data['pre_load'])? 0 : 1
+		);
+		wp_localize_script( 'wikinearby-apicall', 'locData', $data_array );
+	
+		// Enqueued script with localized data.
+		wp_enqueue_script( 'wikinearby-apicall' );
+		
 		?>
 		<div class="wkn-main-content-container">
             <div class="wkn-main-content-wrapper">
@@ -101,10 +117,10 @@ class Location {
                             <img class="wkn-img-place" src="<?php echo esc_url($this->loc_data['loc_image']) ?>">
                         </div>
                         <h3> <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
-                        <h4> ( <?php echo esc_html( $this->loc_data['latitude']).','.esc_html( $this->loc_data['longitude'])?> )</h4>                        
-                        <div class="nearby-place">
+                        <h4 id="wkn-my-coords"> ( <?php echo esc_html( $this->loc_data['latitude']).','.esc_html( $this->loc_data['longitude'])?> )</h4>                        
+                        <div class="wkn-nearby-place">
                             <h3> Nearby Places</h3>
-                            <div class="nearby-place-container">
+                            <div id="wkn-nearby-wrap" class="wkn-nearby-place-container">
                                 
                             </div>
                         </div>
@@ -154,18 +170,30 @@ class Location {
 
 register_activation_hook( __FILE__, 'wikinearby_activate' );
 register_deactivation_hook( __FILE__, 'wikinearby_deactivate' );
+register_uninstall_hook( __FILE__, 'wikinearby_uninstall' );
 
-// Add option to the DB
+
+// Check if option is in the DB, if not create it; then activate the shortcode
 function wikinearby_activate(){
-    $sav = new Saved_Locations();
-    add_option("wikinearby_saved_locations", $sav);
+    $saved_locations = get_option('wikinearby_saved_locations');
+	
+    if($saved_locations === false){
+        $sav = new Saved_Locations();
+		add_option("wikinearby_saved_locations", $sav);
+	}
 
 }
 
-// Remove option
+// Do nothing for now
 function wikinearby_deactivate(){
-    delete_option("wikinearby_saved_locations");
+
 }
+
+// Delete data
+function wikinearby_uninstall(){
+	delete_option("wikinearby_saved_locations");
+}
+
 
 // Add menu
 
@@ -270,7 +298,8 @@ function media_uploader_enqueue() {
 add_action('admin_enqueue_scripts', 'media_uploader_enqueue');
 
 
-// Add shortcode, checks if the id is inside the Saved_Locations objects, if it's found it returns the displayed Location
+// Render shortcode to post/page
+// Checks if the id is inside the Saved_Locations objects, if it's found it returns the displayed Location
 function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
     //Normalize
     $atts = array_change_key_case((array)$atts, CASE_LOWER);
@@ -300,4 +329,6 @@ function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
     }
 
 }
+
+// Then add the shortcode
 add_shortcode('wikinearby', 'wikinearby_render_shortcode');
