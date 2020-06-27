@@ -27,6 +27,23 @@ $(document).ready(function() {
       }
     }
     
+    function calcDistance(lat1, lon1, lat2, lon2){
+        // Set all variables for the haversine forumla
+        var rad = 6371e3; //Earth radius in meter
+        var phi1 = lat1 * Math.PI/180;
+        var phi2 = lat2 * Math.PI/180;
+        var delta1 = (lat2-lat1) * Math.PI/180;
+        var delta2 = (lon2-lon1) * Math.PI/180;
+        
+        // Calculate all constant that we need for the haversine formula
+        var a = Math.sin(delta1/2) * Math.sin(delta1/2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(delta2/2) * Math.sin(delta2/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var res = rad * c;
+        
+        // Final value is on meter so we return res/1000 to have the result in km
+        return res/1000;
+    }
+    
     function callWikiApi(position){
         var positions = 
             {
@@ -35,6 +52,8 @@ $(document).ready(function() {
             };   
         lat = position.coords.latitude;
         lon = position.coords.longitude;
+        
+        
         var my_coords = document.getElementById("wkn-my-coords");
         my_coords.innerHTML += "X : " + positions.latitude + "  Y : " + positions.longitude;
         var url = "https://en.wikipedia.org/w/api.php";
@@ -59,7 +78,7 @@ $(document).ready(function() {
             success: function(response){
                         var result = response["query"].pages;
                         var key_value = Object.keys(result);
-                        var title, image, coords;
+                        var title, image, coords, distance;
                         var container, image_container;
                 
                         if(Object.keys(result).length == 0) {
@@ -72,6 +91,7 @@ $(document).ready(function() {
                             title = document.createElement("h3");
                             image = document.createElement("img");
                             coords = document.createElement("h4");
+                            distance = document.createElement("h5");
                             container.setAttribute("id","wkn-postid-" + key_value[i]);
                             image_container.classList.add("wkn-img-container");
                             div.appendChild(container);
@@ -79,10 +99,15 @@ $(document).ready(function() {
                             image_container.appendChild(image);
                             container.appendChild(title);
                             container.appendChild(coords);
+                            container.appendChild(distance);
                             title.innerHTML += result[key_value[i]]["title"];
                             coords.innerHTML += "X : " + result[key_value[i]]["coordinates"]["0"]["lat"];
                             coords.innerHTML += "  Y : " + result[key_value[i]]["coordinates"]["0"]["lon"];
                             coords.classList.add("wkn-postid-coords");
+                            
+                            distance.innerHTML += "The distance between " + result[key_value[i]]["title"] +" and your position is " 
+                                + calcDistance(lat, lon, result[key_value[i]]["coordinates"]["0"]["lat"], result[key_value[i]]["coordinates"]["0"]["lon"]).toFixed(1) + " Km.";
+                            
                             if(result[key_value[i]].hasOwnProperty("thumbnail")){
                                 image.setAttribute("src",result[key_value[i]]["thumbnail"]["source"]);
                             } else {
