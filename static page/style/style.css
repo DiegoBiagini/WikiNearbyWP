@@ -31,27 +31,27 @@ img {
 
 /* START REGOLE HEADER */
 
-.webpage {
+.wkn-webpage {
     position: relative;
     width: 100%;
 }
 
-.header {
+.wkn-header {
     min-height: 200px;
 }
 
-.main-content-container{
+.wkn-main-content-container{
     width: 1300px;
     padding: 0px 10px;
     margin: 0 auto;
 }
 
-.main-content-wrapper {
+.wkn-main-content-wrapper {
     min-height: 650px;
     background-color: aqua;
 }
 
-.main-content-box {
+.wkn-main-content-box {
     width: 50%;
     margin: 0 auto;
     background-color: #FFFFFF;
@@ -64,31 +64,31 @@ img {
     color: #696969;
 }
 
-.main-content-box>* {
+.wkn-main-content-box>* {
     padding: 25px 50px;
 }
 
-.main-content h1 {
+.wkn-main-content h1 {
     float: left;
 }
 
-.main-content-box h3, .main-content-box h4{
+.wkn-main-content-box h3, .wkn-main-content-box h4{
     text-align: center;
     padding-bottom: 10px;
 }
 
-.nearby-place {
+.wkn-nearby-place {
     border-top: 2px solid #696969;
     padding-top: 10px;
 }
 
 
 
-.nearby-place h3 {
+.wkn-nearby-place h3 {
     text-align: justify;
 }
 
-.img-container img{
+.wkn-img-container img{
     border-radius: 50%;
     border: 2px solid #696969;
     max-height: 150px;
