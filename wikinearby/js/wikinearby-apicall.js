@@ -1,10 +1,10 @@
 $(document).ready(function() {
 	//Variables passed through WP
-    var lat = locData.latitude;
-	var lon = locData.longitude;
-	var kmRange = locData.km_range;
-	var preLoad = locData.pre_load;
-	var showCoord = locData.show_coord;
+    var lat = data.latitude;
+	var lon = data.longitude;
+	var kmRange = data.km_range;
+	var preLoad = data.pre_load;
+	var showCoord = data.show_coord;
 
 	
     var div = document.getElementById("wkn-nearby-wrap");
@@ -112,7 +112,7 @@ $(document).ready(function() {
                             if(result[key_value[i]].hasOwnProperty("thumbnail")){
                                 image.setAttribute("src",result[key_value[i]]["thumbnail"]["source"]);
                             } else {
-                                image.setAttribute("src","assets/empty.png");
+                                image.setAttribute("src",data.plugin_path + "/assets/image.png");
                             }
                         }
                     },

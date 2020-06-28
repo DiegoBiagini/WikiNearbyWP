@@ -100,9 +100,11 @@ class Location {
 			'longitude' => $this->loc_data['longitude'],
 			'km_range' => $this->loc_data['km_range'],
 			'show_coord' => empty($this->loc_data['show_coord']) ? 0 : 1,
-			'pre_load' => empty($this->loc_data['pre_load'])? 0 : 1
+			'pre_load' => empty($this->loc_data['pre_load'])? 0 : 1,
+			'plugin_path' =>  plugin_dir_url( __FILE__ )
+			
 		);
-		wp_localize_script( 'wikinearby-apicall', 'locData', $data_array );
+		wp_localize_script( 'wikinearby-apicall', 'data', $data_array );
 	
 		// Enqueued script with localized data.
 		wp_enqueue_script( 'wikinearby-apicall' );
