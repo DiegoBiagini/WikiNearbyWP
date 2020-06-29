@@ -1,8 +1,6 @@
 <?php
 
 
-
-
 function wikinearby_menu(){
 	?>
 	<h2>Wikinearby</h2>

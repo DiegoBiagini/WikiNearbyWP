@@ -76,11 +76,12 @@ class Saved_Locations {
 class Location {
 	// Array containing name, latitude, longitude, etc
     public $loc_data;
-    public $id;
+	public $id;
+
 
     public function __construct($data){
         $this->loc_data = $data;
-        $this->id = 0;
+		$this->id = 0;
     }
 	
 	//Used to display on front end
@@ -279,14 +280,14 @@ function wikinearby_delete_location(){
 add_action('admin_post_delete_location', 'wikinearby_delete_location');
 
 // Deletes all locations by reinitializing the Saved_Locations object
-function wikinearby_delete_all_location(){
+function wikinearby_delete_all_locations(){
 
 	update_option('wikinearby_saved_locations', new Saved_Locations());
 
     wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
 }
 
-add_action('admin_post_delete_all', 'wikinearby_delete_all_location');
+add_action('admin_post_delete_all', 'wikinearby_delete_all_locations');
 
 
 //Register media uploader

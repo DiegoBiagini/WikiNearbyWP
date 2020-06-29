@@ -1,1 +1,152 @@
 \section*{Back End}
+Il back end si occupa principalmente di acquisire le informazioni su luoghi da parte dell'utente( proprietario del sito web), salvarli dentro il database di Wordpress e successivamente consultare i dati salvati per mostrare a chi visita il sito il widget front end.\\
+Per individuare il luogo dove sarà mostrato l'applicativo è stato usato uno shortcode, inseribile in qualsiasi luogo in cui si voglia visualizzarlo( per esempio post, pagine, sidebar, etc.).
+\subsection*{Salvataggio dei dati}
+Per conservare i dati dei luoghi inseriti dall'utente sono usate due classi:
+\begin{itemize}
+\item \texttt{Location}: mantiene le informazioni di un singolo luogo(latitudine, longitudine, nome del luogo, immagine del luogo, altre impostazioni) dentro l'array associativo \texttt{\$loc\_data}. 
+Espone i metodi \texttt{display\_table()}, usato  per mostrare una riga della tabella sul pannello di controllo Wordpress che conterrà tutte le Location,  e \texttt{display()}, usato per mostrare l'applicativo quando necessario.
+\item \texttt{Saved\_Locations}: mantiene un array di oggetti di tipo \texttt{Location} e offre i metodi CRUD per gestire questa collezione, inoltre offre un metodo, \\\texttt{print\_locations\_table()} per stampare una tabella contenente informazioni di tutte le Location.Per gestire la collezione viene registrato un id progressivo, \texttt{\$prog\_id}, che serve a identificare ogni singola Location nell'array \texttt{\$locations}, questo è incrementato ad ogni inserimento di un nuovo luogo
+\end{itemize}
+Per registrare effettivamente questi dati sul database Wordpress è stata usata la Options API \cite{options}, in particolare le funzioni \texttt{add\_option( option\_name , object)}, \texttt{remove\_option(option\_name)}, \texttt{update\_option(option\_name , object)}, per aggiungere, rimuovere, aggiornare un dato, mentre la funzione \texttt{get\_option(option\_name)} per leggerlo.
+\subsection*{Plugin Setup}
+Uno dei primi accorgimenti da prendere quando viene scritto un plugin Wordpress è quello di scrivere i metodi necessari alla sua attivazion/disattivazione e e successivamente registrarvi l'hook \cite{hooks} appropriato.\\\\
+Nel nostro caso  vogliamo che quando il plugin è attivato, se non è presente l'oggetto \texttt{Saved\_Locations} nel database allora esso sarà aggiunto. \\
+Inoltre se l'utente decide di disinstallare il plugin sarà necessario rimuovere questo dato dalla memoria.\\
+\begin{lstlisting}
+register_activation_hook( __FILE__, 'wikinearby_activate' );
+register_deactivation_hook( __FILE__, 'wikinearby_deactivate' );
+register_uninstall_hook( __FILE__, 'wikinearby_uninstall' );
+
+// Check if option is in the DB, if not create it
+function wikinearby_activate(){
+    $saved_locations = get_option('wikinearby_saved_locations');
+	
+    if($saved_locations === false){
+        $sav = new Saved_Locations();
+		add_option("wikinearby_saved_locations", $sav);
+	}
+}
+
+// Do nothing for now
+function wikinearby_deactivate(){}
+
+// Delete data
+function wikinearby_uninstall(){
+	delete_option("wikinearby_saved_locations");
+}
+\end{lstlisting}
+
+\subsection*{Menu pages}
+L'interfaccia utente principale del plugin è offerta tramite i cosiddetti menu\cite{menus}, aggiunti nel seguente modo.\\
+\begin{lstlisting}
+add_action( 'admin_menu', 'wikinearby_menu_page' );
+
+function wikinearby_menu_page(){
+    add_menu_page('WikiNearby','WikiNearby','manage_options','wikinearby-menu',
+    'wikinearby_menu',plugin_dir_url(__FILE__ ).'assets/icon.png');
+    add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location',
+     'manage_options', 'edit-location-submenu', 'edit_location_submenu');
+}
+\end{lstlisting}
+Le funzioni che mostrano i due menu sono state scritte nei file \texttt{menu.php} e \\ \texttt{edit\_location\_submenu.php}.\\ \\
+Il menu principale si occupa solamente di leggere le \texttt{Location} memorizzate e mostrare una tabella corrispondente ad esse( col metodo di \texttt{Saved\_Locations} appropriato), rendendo possibile la modifica e eliminazione di singoli luoghi.\\
+Il menu secondario invece viene usato quando l'utente ha la necessità di aggiungere o modificare una \texttt{Location}.\\
+Esso offre un form in cui è possibile inserire i dati di un nuovo luogo, in particolare è anche possibile aggiungere le coordinate individuandole con una mappa( il file javascript corrispondente fa uso del plugin JQuery locationpicker \cite{locpicker}).\\\\
+Questa pagina viene usata anche per modificare un luogo inserito precedentemente, per far questo deve essere inviata una richiesta GET con l'id del luogo da modificare come parametro(queste richieste sono normalmente eseguite premendo il bottone modifica di fianco a un luogo, nel menu principale).\\
+In questo caso i campi del form saranno preimpostati ai valori precedenti alla modifica:
+
+\begin{lstlisting}
+// Check if it came from the edit link
+//if this is true initialize the fields to the given Location
+$editing = false;
+$selected_location = null;
+if($_GET['id'] != 0) {
+	$editing = true;
+		
+	$saved_locations = get_option('wikinearby_saved_locations');
+	$selected_location = $saved_locations->get_location_by_id($_GET['id']);
+	...
+		
+}
+...
+//Location name
+<input style="max-width:30ch" class="widefat" id="loc_name" name="loc_name" type="text" 
+value="<?php echo($editing ?  $selected_location->loc_data['loc_name'] : 'Location'); ?>"
+ required>
+...
+\end{lstlisting}
+\subsection*{Aggiornamento delle informazioni salvate}
+Per eseguire le operazioni di creazione, rimozione, modifica dei luoghi sono state usate le post action di Wordpress \cite{postaction}.\\
+Queste sono dei particolari tipi di hook che permettono di gestire richieste GET o POST all'interno del sito.\\
+Un esempio del loro uso è il seguente:
+\begin{lstlisting}
+function wikinearby_edit_location(){
+    //Create new
+    unset($_POST['action']);
+    $loc = new Location($_POST);
+    $loc->id = $_POST['id'];
+
+    $saved_locations = get_option('wikinearby_saved_locations');
+    if($saved_locations === false)
+        echo "ERROR";
+    else{
+        $saved_locations->update_location($_POST['id'], $loc);
+
+        update_option('wikinearby_saved_locations', $saved_locations);
+    }
+
+    wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+}
+
+add_action('admin_post_edit_location', 'wikinearby_edit_location');
+\end{lstlisting}
+
+In questo modo basta inviare una richiesta POST al percorso admin-post.php, specificando, oltre ai parametri della richiesta, un parametro aggiuntivo, \texttt{action = edit\_location}.\\ 
+Quando è ricevuta una richiesta del genere, è eseguita la funzione\\ \texttt{wikinearby\_edit\_location}, che non fa altro che recuperare l'oggetto \texttt{Saved\_Locations} e modificare la \texttt{Location} avente l'id passato come parametro, aggiornandola a un luogo con nuovi parametri.\\
+Le altre azioni implementate in modo analogo sono:
+\begin{itemize}
+\item \texttt{wikinearby\_add\_location} : aggiunge una nuova \texttt{Location}
+\item \texttt{wikinearby\_delete\_location} : rimuove una \texttt{Location} dato il suo id
+\item \texttt{wikinearby\_delete\_all\_locations}: rimuove tutte le \texttt{Location} e reinizializza l'oggetto \texttt{Saved\_Locations}  
+\end{itemize}
+\subsection*{Visualizzazione del plugin}
+Per consentire all'utente di inserire il plugin in una sezione del sito è usato il sistema degli shortcode Wordpress\cite{shortcode}.\\
+Tramite questa API è semplicemente necessario inserire un codice del tipo \texttt{[wikinearby id=1]} per utilizzare il plugin, dove id corrisponde all'id della \texttt{Location} nell'oggetto \texttt{Saved\_Locations}.\\
+Il codice che si occupa di tradurre questi codici nell'output voluto è il seguente:\\
+\begin{lstlisting}
+function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
+    //Normalize
+    $atts = array_change_key_case((array)$atts, CASE_LOWER);
+
+    $wikinearby_atts = shortcode_atts(
+        ['id' => '',] , $atts, $tag);
+    
+    if(empty($wikinearby_atts['id']))
+        return 'Wrong shortcode';
+
+    //Find the correct location
+    $given_id = $wikinearby_atts['id'];
+
+    $saved_locations = get_option('wikinearby_saved_locations');
+    if($saved_locations === false)
+        return "ERROR";
+    else{
+        $found_loc =  $saved_locations->get_location_by_id($given_id);
+	if($found_loc === null)
+		return 'No location found';
+		
+	ob_start(); 
+        $found_loc->display();
+        $output = ob_get_contents();
+        ob_end_clean();
+        
+        return $output;
+    }
+}
+
+// Then add the shortcode
+add_shortcode('wikinearby', 'wikinearby_render_shortcode');
+\end{lstlisting}
+Esso non fa altro che estrarre l'id voluto dalla notazione shortcode inserita dall'utente, ricercare tra le \texttt{Saved\_Locations} se esiste un luogo con quell'id e in caso affermativo chiamare il metodo display di quell'elemento, salvando il risultato di questa visualizzazione in una variabile poi ritornata.\\
+Quest'ultimo passaggio è realizzato attivando l'output buffering col metodo PHP \texttt{ob\_start()}, che invece di mostrare a schermo il risultato di \texttt{\$found\_loc->display()} lo salva in memoria.

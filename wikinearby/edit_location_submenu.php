@@ -5,8 +5,6 @@ function edit_location_submenu(){
 	wp_register_script("google-api","http://maps.google.com/maps/api/js?sensor=false&libraries=places");
 	wp_register_script( 'wikinearby-locpicker', plugin_dir_url( __FILE__ ).'js/locationpicker.jquery.js' );
 	
-
-
 	
 	// Add style
 	wp_register_style( 'form_style', plugin_dir_url( __FILE__ ).'style/form_style.css' );

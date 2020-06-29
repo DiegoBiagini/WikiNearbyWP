@@ -83,8 +83,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Change margins, papersize, etc of the document
 \usepackage[
-  inner=28mm,% left margin on an odd page
-  outer=41mm,% right margin on an odd page
+  inner=35mm,% left margin on an odd page
+  outer=35mm,% right margin on an odd page
   ]{geometry}
 % Modify how \chapter, \section, etc. look
 % The titlesec package is very configureable
@@ -123,8 +123,9 @@
 % Bibliography
 % http://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\usepackage[backend=bibtex,  bibencoding=utf8 ]{biblatex}
-%\addbibresource{bib/mybib}
+\usepackage[backend=biber,  bibencoding=utf8 ]{biblatex}
+\addbibresource{bib/mybib.bib}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Misc
@@ -165,3 +166,27 @@
 	urlcolor=black,%
 	pdfstartview=FitH%
 }
+
+%Code listings
+\usepackage{listings,xcolor}
+
+\definecolor{dkgreen}{rgb}{0,.6,0}
+\definecolor{dkblue}{rgb}{0,0,.6}
+\definecolor{dkyellow}{cmyk}{0,0,.8,.3}
+
+\lstset{
+  language        = php,
+  basicstyle      = \footnotesize\ttfamily,
+  keywordstyle    = \color{dkblue},
+  stringstyle     = \color{red},
+  identifierstyle = \color{dkgreen},
+  commentstyle    = \color{gray},
+  emph            =[1]{php},
+  emphstyle       =[1]\color{black},
+  emph            =[2]{if,and,or,else},
+  emphstyle       =[2]\color{dkyellow},
+  numbers=left,
+  frame=tb,
+  columns=fullflexible,
+  showstringspaces=false
+  }
