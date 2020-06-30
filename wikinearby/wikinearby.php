@@ -12,6 +12,7 @@
 // Includes
 include(plugin_dir_path( __FILE__ ).'/menu.php');
 include(plugin_dir_path( __FILE__ ).'/edit_location_submenu.php');
+include(plugin_dir_path( __FILE__ ).'/notices.php');
 
 // Class that will store a collection of Locations
 class Saved_Locations {
@@ -26,7 +27,7 @@ class Saved_Locations {
     }
 	
     public function add_location($loc){
-        $loc->id = $this->prog_id;
+        $loc->set_id($this->prog_id);
 
         $this->locations[$this->prog_id] = $loc;
 
@@ -76,13 +77,15 @@ class Saved_Locations {
 class Location {
 	// Array containing name, latitude, longitude, etc
     public $loc_data;
-	public $id;
-
 
     public function __construct($data){
         $this->loc_data = $data;
-		$this->id = 0;
+		$this->set_id(0);
     }
+	
+	public function set_id($id){
+		$this->loc_data['id'] = $id;
+	}
 	
 	//Used to display on front end
     public function display(){
@@ -133,20 +136,7 @@ class Location {
         </div>
 		
 		<?php
-		/*
 
-        echo "Location:".esc_html( $this->loc_data['loc_name'])."<br>";
-        echo "Longitude:".esc_html( $this->loc_data['longitude'])."<br>";
-        echo "Latitude:".esc_html( $this->loc_data['latitude'])."<br>";
-        echo "Km range:".esc_html( $this->loc_data['km_range'])."<br>";
-        echo "Show coord:".esc_html( $this->loc_data['show_coord'])."<br>";
-        echo "Preload:".esc_html( $this->loc_data['pre_load'])."<br>";
-        ?>
-        <img src="<?php echo esc_url($this->loc_data['loc_image']) ?>" />
-        <?php 
-        echo "Id:".$id;
-		
-		*/
     }
 	
 	// Used to display in admin page
@@ -156,12 +146,12 @@ class Location {
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['longitude'])."</td>";
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['latitude'])."</td>";
         echo "<td class='manage-column column-columnname'>".esc_html( $this->loc_data['km_range'])."</td>";
-        echo "<td class='manage-column column-columnname'>".esc_html( '[wikinearby id='.$this->id.']')."</td>";
+        echo "<td class='manage-column column-columnname'>".esc_html( '[wikinearby id='.$this->loc_data['id'].']')."</td>";
         echo "<td class='manage-column column-columnname'>";
 		// Button to edit location, sends a GET to edit-location-submenu with the id of the location you want to modify
-		echo '<a class="dashicons-before dashicons-edit-large" href="'.esc_html(get_admin_url().'admin.php?page=edit-location-submenu&id='.$this->id).'"></a>';
+		echo '<a class="dashicons-before dashicons-edit-large" href="'.esc_html(get_admin_url().'admin.php?page=edit-location-submenu&id='.$this->loc_data['id']).'"></a>';
 		// Button to remove location, sends a GET to admin-post with the id of the location to remove
-		echo '<a class="dashicons-before dashicons-trash" href="'.esc_html(get_admin_url().'admin-post.php?action=delete_location&id='.$this->id).'"></a>';
+		echo '<a  class="dashicons-before dashicons-trash" href="'.esc_html(get_admin_url().'admin-post.php?action=delete_location&id='.$this->loc_data['id']).'"></a>';
 		echo "</td>";
 
         echo "</tr>";
@@ -216,6 +206,7 @@ function wikinearby_menu_page(){
 }
 
 
+
 //Add post actions
 // Called when a location is added, retrieves the Saved_Locations obj and adds a Location
 // Locations data is passed through POST
@@ -225,14 +216,19 @@ function wikinearby_add_location(){
 
     $saved_locations = get_option('wikinearby_saved_locations');
     if($saved_locations === false)
-        echo "ERROR";
+		add_flash_notice( __("Error"), "error", true );
     else{
         $saved_locations->add_location($loc);
 
         update_option('wikinearby_saved_locations', $saved_locations);
+		
+		add_flash_notice( __("Location added successfully"), "success", true );
+
     }
 
     wp_redirect(get_admin_url().'admin.php?page=edit-location-submenu');
+	
+
 }
 
 add_action('admin_post_add_location', 'wikinearby_add_location');
@@ -240,21 +236,25 @@ add_action('admin_post_add_location', 'wikinearby_add_location');
 // Called when a location is modified, checks if the given location exists in the Saved_Locations, if it exists it updates it 
 // Modified parameters are passed through POST
 function wikinearby_edit_location(){
-    //Save it yo
+    //Create new location
     unset($_POST['action']);
     $loc = new Location($_POST);
-	$loc->id = $_POST['id'];
+	$loc->set_id($_POST['id']);
 
     $saved_locations = get_option('wikinearby_saved_locations');
     if($saved_locations === false)
-        echo "ERROR";
+		add_flash_notice( __("Error"), "error", true );
     else{
         $saved_locations->update_location($_POST['id'], $loc);
 
         update_option('wikinearby_saved_locations', $saved_locations);
+		
+		add_flash_notice( __("Location modified succesfully"), "success", true );
+
     }
 
     wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+	
 }
 
 add_action('admin_post_edit_location', 'wikinearby_edit_location');
@@ -267,14 +267,19 @@ function wikinearby_delete_location(){
 
     $saved_locations = get_option('wikinearby_saved_locations');
     if($saved_locations === false)
-        echo "ERROR";
+		add_flash_notice( __("Error"), "error", true );
     else{
         $saved_locations->delete_location($id);
 
         update_option('wikinearby_saved_locations', $saved_locations);
-    }
+		
+		add_flash_notice( __("Location removed succesfully"), "success", true );
 
+    }
+	
     wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
+	
+
 }
 
 add_action('admin_post_delete_location', 'wikinearby_delete_location');

@@ -31,8 +31,12 @@ function edit_location_submenu(){
 	wp_enqueue_script("google-api");
 	wp_enqueue_script("wikinearby-locpicker");
 	
+	
 	?>
 	<h2><?php echo($editing ?  'Edit location' : 'Add a new location'); ?></h2>
+	
+		<?php settings_errors(); ?>
+
 	<form action='<?php echo esc_url( admin_url('admin-post.php') ); ?>' method='post'>
 	<div class="wikinearby_form" >
 		<p>

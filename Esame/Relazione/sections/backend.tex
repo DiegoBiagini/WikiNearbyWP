@@ -4,9 +4,10 @@ Per individuare il luogo dove sarà mostrato l'applicativo è stato usato uno sh
 \subsection*{Salvataggio dei dati}
 Per conservare i dati dei luoghi inseriti dall'utente sono usate due classi:
 \begin{itemize}
-\item \texttt{Location}: mantiene le informazioni di un singolo luogo(latitudine, longitudine, nome del luogo, immagine del luogo, altre impostazioni) dentro l'array associativo \texttt{\$loc\_data}. 
-Espone i metodi \texttt{display\_table()}, usato  per mostrare una riga della tabella sul pannello di controllo Wordpress che conterrà tutte le Location,  e \texttt{display()}, usato per mostrare l'applicativo quando necessario.
-\item \texttt{Saved\_Locations}: mantiene un array di oggetti di tipo \texttt{Location} e offre i metodi CRUD per gestire questa collezione, inoltre offre un metodo, \\\texttt{print\_locations\_table()} per stampare una tabella contenente informazioni di tutte le Location.Per gestire la collezione viene registrato un id progressivo, \texttt{\$prog\_id}, che serve a identificare ogni singola Location nell'array \texttt{\$locations}, questo è incrementato ad ogni inserimento di un nuovo luogo
+\item \texttt{Location}: mantiene le informazioni di un singolo luogo(latitudine, longitudine, nome del luogo, immagine del luogo, altre impostazioni) dentro l'array associativo \texttt{\$loc\_data}, il quale contiene anche un suo codice identificativo. \\
+Espone i metodi \texttt{display\_table()}, usato  per mostrare una riga della tabella sul pannello di controllo Wordpress che conterrà tutte le Location,  \texttt{display()}, usato per mostrare l'applicativo quando necessario, e \texttt{set\_id(id)}, per assegnargli un identificativo.
+\item \texttt{Saved\_Locations}: mantiene un array di oggetti di tipo \texttt{Location} e offre i metodi CRUD per gestire questa collezione, inoltre offre un metodo, \\\texttt{print\_locations\_table()} per stampare una tabella contenente informazioni di tutte le Location.\\
+Per gestire la collezione viene registrato un id progressivo, \texttt{\$prog\_id}, che serve a identificare ogni singola Location nell'array \texttt{\$locations}, questo è incrementato ad ogni inserimento di un nuovo luogo
 \end{itemize}
 Per registrare effettivamente questi dati sul database Wordpress è stata usata la Options API \cite{options}, in particolare le funzioni \texttt{add\_option( option\_name , object)}, \texttt{remove\_option(option\_name)}, \texttt{update\_option(option\_name , object)}, per aggiungere, rimuovere, aggiornare un dato, mentre la funzione \texttt{get\_option(option\_name)} per leggerlo.
 \subsection*{Plugin Setup}
@@ -82,20 +83,21 @@ Queste sono dei particolari tipi di hook che permettono di gestire richieste GET
 Un esempio del loro uso è il seguente:
 \begin{lstlisting}
 function wikinearby_edit_location(){
-    //Create new
+    //Create new location
     unset($_POST['action']);
     $loc = new Location($_POST);
-    $loc->id = $_POST['id'];
+	$loc->set_id($_POST['id']);
 
     $saved_locations = get_option('wikinearby_saved_locations');
     if($saved_locations === false)
-        echo "ERROR";
+		add_flash_notice( __("Error"), "error", true );
     else{
         $saved_locations->update_location($_POST['id'], $loc);
 
         update_option('wikinearby_saved_locations', $saved_locations);
+		
+	add_flash_notice( __("Location modified succesfully"), "success", true );
     }
-
     wp_redirect(get_admin_url().'admin.php?page=wikinearby-menu');
 }
 
@@ -110,6 +112,9 @@ Le altre azioni implementate in modo analogo sono:
 \item \texttt{wikinearby\_delete\_location} : rimuove una \texttt{Location} dato il suo id
 \item \texttt{wikinearby\_delete\_all\_locations}: rimuove tutte le \texttt{Location} e reinizializza l'oggetto \texttt{Saved\_Locations}  
 \end{itemize}
+
+In seguito al successo(o all'insuccesso) di ciascuna azione è inviata inoltre una notifica, attraverso il metodo \texttt{add\_flash\_notice}.\\
+Questo si occupa di memorizzare delle notifiche da mostrare successivamente all'utente(attraverso l'azione \texttt{admin\_notices}\cite{notices}); avendo cura di eliminarle una volta che sono state visualizzate.
 \subsection*{Visualizzazione del plugin}
 Per consentire all'utente di inserire il plugin in una sezione del sito è usato il sistema degli shortcode Wordpress\cite{shortcode}.\\
 Tramite questa API è semplicemente necessario inserire un codice del tipo \texttt{[wikinearby id=1]} per utilizzare il plugin, dove id corrisponde all'id della \texttt{Location} nell'oggetto \texttt{Saved\_Locations}.\\
