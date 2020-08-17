@@ -46,13 +46,9 @@ img {
     margin: 0 auto;
 }
 
-.wkn-main-content-wrapper {
-    min-height: 650px;
-    background-color: aqua;
-}
 
 .wkn-main-content-box {
-    width: 50%;
+    width: 75%;
     margin: 0 auto;
     background-color: #FFFFFF;
     border: 3px solid #696969;
@@ -82,10 +78,6 @@ img {
     padding-top: 10px;
 }
 
-.wkn-nearby-place h3:first-child {
-    text-align: justify;
-}
-
 .wkn-img-container img{
     border-radius: 50%;
     border: 2px solid #696969;
@@ -95,9 +87,35 @@ img {
     margin-right: auto;
     margin-bottom: 10px;
 }
-/*
-.main-content {
-    
-}*/
 
+.wkn-card-image img{
+    width: 100%;
+    max-height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+
+#wkn-postid {
+    float: left;
+}
+
+.carousel-control-next-icon, .carousel-control-prev-icon {
+    background: #C6C6C6 !important;
+    color: #000;
+    border-radius: 15px;
+    border: none;
+    font-size: 50px;
+    height: 80px !important;
+    width: 80px !important;
+}
+
+.carousel-control-next-icon:hover, .carousel-control-prev-icon:hover{
+    background: #4682B4 !important;
+}
+
+ol.carousel-indicators {
+    position: relative;
+    background: #C6C6C6;
+}
 /* END REGOLE HEADER */

@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="js/jquery.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="wkn-webpage">
@@ -28,9 +30,33 @@
                         <h3> LOREM INPIS </h3>
                         <h4 id="wkn-my-coords"></h4>
                         <div class="wkn-nearby-place">
-                            <h3> Nearby Places</h3>
-                            <div id="wkn-nearby-wrap" class="wkn-nearby-place-container">
-                                
+                            <h3 class="text-center"> Nearby Places</h3>
+                            
+                            <!-- PAGE CAROUSEL-CONTENT -->
+                            <div id="carousel" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="container">
+                                        <div id="wkn-nearby-wrap" class="row">
+                                            
+                                            <!-- WIKIPEDIA-DINAMIC-CONTENT -->
+                                            
+                                        </div>
+                                        <div id="carousel-buttons">
+                                            <a class="carousel-control-prev" href="#carousel" data-slide="prev">
+                                                <button class="carousel-control-prev-icon" aria-hidden="true">
+                                                    <i class="fa fa-arrow-left"></i>
+                                                </button>
+                                            </a>
+                                            <a class="carousel-control-next" href="#carousel" data-slide="next">
+                                                <button class="carousel-control-next-icon" aria-hidden="true">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                        <div id="carousel-indexs">
+                                        </div>
+                                    </div>
+                                </div>                             
                             </div>
                         </div>
                     </div>
