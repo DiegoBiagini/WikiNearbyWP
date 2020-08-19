@@ -1,21 +1,24 @@
-/* CSS file instructions*/
 
+/* START REGOLE HEADER */
 
-.wkn-main-content-container{
-	max-width: 800px !important; 
-	width: 95%;
+#wkn-webpage {
+    position: relative;
+    width: 100%;
+}
+
+#wkn-header {
+    min-height: 200px;
+}
+
+#wkn-main-content-container{
+    width: 1300px;
     padding: 0px 10px;
     margin: 0 auto;
 }
 
-.wkn-main-content-wrapper {
-	width: 100%;
-    min-height: 80%;
-    background-color: aqua;
-}
 
-.wkn-main-content-box {
-    width: 90%;
+#wkn-main-content-box {
+    width: 75%;
     margin: 0 auto;
     background-color: #FFFFFF;
     border: 3px solid #696969;
@@ -23,33 +26,28 @@
     box-shadow: 2px 2px #F0F0FC;
 }
 
-.fa-map-marker {
+#marker {
     color: #696969;
+	font-size:50px;
+	float:left;
 }
 
-.wkn-main-content-box>* {
+#wkn-main-content-box>* {
     padding: 25px 50px;
 }
 
-.wkn-main-content h1 {
-    float: left;
-}
 
-.wkn-main-content-box h3, .wkn-main-content-box h4{
+#wkn-main-content-box h3, #wkn-main-content-box h4{
     text-align: center;
     padding-bottom: 10px;
 }
 
-.wkn-nearby-place {
+#wkn-nearby-place {
     border-top: 2px solid #696969;
     padding-top: 10px;
 }
 
-.wkn-nearby-place h3:first-child {
-    text-align: justify;
-}
-
-.wkn-img-container img{
+#wkn-img-container img{
     border-radius: 50%;
     border: 2px solid #696969;
     max-height: 150px;
@@ -59,12 +57,82 @@
     margin-bottom: 10px;
 }
 
+#wkn-card-image img {
+    width: 100%;
+    max-height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+	border-radius: 10px;
+}
 
+#wkn-card-container {
+	border: 2px solid #696969;
+	padding:5px;
+}
 
+#wkn-postid {
+    margin-bottom: 20px;
+}
 
-/*
-.main-content {
-    
-}*/
+#wkn-card-footer {
+	border: 1px solid #696969;
+}
 
+#wkn-postid-coords {
+	text-align: center;
+}
+
+#wkn-control-prev, #wkn-control-next{
+    background: #C6C6C6;
+    color: #000;
+    border-radius: 15px;
+    border: none;
+    font-size: 50px;
+    height: 80px;
+    width: 80px;
+}
+
+#wkn-control-prev:hover, #wkn-control-next:hover {
+    background: #4682B4;
+}
+
+#wkn-carousel-indicators {
+    position: relative;
+	margin-top: 20px;
+
+}
+
+li#wkn-indicator {
+	background-color: #8c8888;
+	opacity: 1;
+	height: 6px;
+	width: 60px;
+}
+
+li#wkn-indicator.active {
+	background-color: #4682B4;
+	height: 8px;;
+	width: 70px;
+}
+
+li#wkn-indicator.visited, li#wkn-indicator:hover {
+	background-color: #4682B4;
+	opacity: 1;
+}
+
+//Roba temporanea per vedere le dimensioni
+
+.card-body{
+	padding:5px !important; 
+}
+
+.card-footer{
+	padding:5px !important; 
+}
+
+#wkn-card-container .card-body h5 {
+	font-size:14px;
+}
+/* END REGOLE HEADER */
 /* END REGOLE HEADER */

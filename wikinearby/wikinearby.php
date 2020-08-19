@@ -89,12 +89,21 @@ class Location {
 	
 	//Used to display on front end
     public function display(){
-		wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'style/wkn_style.css' );
+		wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'/style/wkn_style.css' );
 		wp_enqueue_style( 'wkn_style' );
 		
 		wp_register_style( 'fa_style', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" );
 		wp_enqueue_style("fa_style");
 		
+		wp_register_script('jquery_script', "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js");
+		wp_enqueue_script('jquery_script');
+		
+		wp_register_style( 'bs_style', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" );
+		wp_enqueue_style("bs_style");
+		
+		wp_register_script('bs_script', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js");
+		wp_enqueue_script("bs_script");
+
 		
 		wp_register_script( 'wikinearby-apicall', plugin_dir_url( __FILE__ ).'js/wikinearby-apicall.js' );
 
@@ -114,26 +123,53 @@ class Location {
 		wp_enqueue_script( 'wikinearby-apicall' );
 		
 		?>
-		<div class="wkn-main-content-container">
-            <div class="wkn-main-content-wrapper">
-                <div class="wkn-main-content-box">
-                    <div class="wkn-main-content">
-                        <h1><span class="fa fa-map-marker" aria-hidden="true"></span></h1>
-                        <div class="wkn-img-container">
-                            <img class="wkn-img-place" src="<?php echo esc_url($this->loc_data['loc_image']) ?>">
+        <div id="wkn-main-content-container">
+            <div id="wkn-main-content-wrapper">
+                <div id="wkn-main-content-box">
+                    <div id="wkn-main-content">
+                        <span id="marker" class="fa fa-map-marker" aria-hidden="true"></span>
+                        <div id="wkn-img-container">
+                            <img id="wkn-img-place" src="<?php echo esc_url($this->loc_data['loc_image']) ?>">
                         </div>
-                        <h3> <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
-                        <h4 id="wkn-my-coords"> ( <?php echo esc_html( $this->loc_data['latitude']).','.esc_html( $this->loc_data['longitude'])?> )</h4>                        
-                        <div class="wkn-nearby-place">
-                            <h3> Nearby Places</h3>
-                            <div id="wkn-nearby-wrap" class="wkn-nearby-place-container">
-                                
+                        <h3>  <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
+                        <h4 id="wkn-my-coords"></h4>
+                        <div id="wkn-nearby-place">
+                            <h3 class="text-center"> Nearby Places</h3>
+                            <div class="container-fluid">
+
+                            <!-- PAGE CAROUSEL-CONTENT -->
+                            <div class="carousel slide" data-ride="carousel"  id="carousels" >
+                                <div class="carousel-inner">
+                                    <div class="container-fluid">
+                                        <div id="wkn-nearby-wrap" class="row">
+                                            
+                                            <!-- WIKIPEDIA-DINAMIC-CONTENT -->
+                                            
+                                        </div>
+                                        <div id="carousel-buttons" >
+                                            <a class="carousel-control-prev" href="#carousels" data-slide="prev">
+                                                <button id="wkn-control-prev" class="carousel-control-prev-icon" aria-hidden="true">
+                                                    <i class="fa fa-arrow-left"></i>
+                                                </button>
+                                            </a>
+                                            <a class="carousel-control-next" href="#carousels" data-slide="next">
+                                                <button id="wkn-control-next" class="carousel-control-next-icon" aria-hidden="true">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                        <div id="carousel-indexs">
+
+                                        </div>
+                                    </div>
+                                </div>                             
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<?php
 
