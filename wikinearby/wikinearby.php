@@ -113,7 +113,6 @@ class Location {
 			'longitude' => $this->loc_data['longitude'],
 			'km_range' => $this->loc_data['km_range'],
 			'show_coord' => empty($this->loc_data['show_coord']) ? 0 : 1,
-			'pre_load' => empty($this->loc_data['pre_load'])? 0 : 1,
 			'plugin_path' =>  plugin_dir_url( __FILE__ )
 			
 		);
@@ -127,12 +126,14 @@ class Location {
             <div id="wkn-main-content-wrapper">
                 <div id="wkn-main-content-box">
                     <div id="wkn-main-content">
-                        <span id="marker" class="fa fa-map-marker" aria-hidden="true"></span>
                         <div id="wkn-img-container">
                             <img id="wkn-img-place" src="<?php echo esc_url($this->loc_data['loc_image']) ?>">
                         </div>
                         <h3>  <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
                         <h4 id="wkn-my-coords"></h4>
+						<button id="wkn-req-button" onClick='callWikiApi({"latitude": data.latitude, "longitude": data.longitude });'>
+							Load Nearby Places
+						</button>
                         <div id="wkn-nearby-place">
                             <h3 class="text-center"> Nearby Places</h3>
                             <div class="container-fluid">

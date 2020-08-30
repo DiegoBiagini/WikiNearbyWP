@@ -76,10 +76,6 @@ function edit_location_submenu(){
 		<input class="widefat" id="show_coord" name="show_coord" type="checkbox" <?php echo($editing ?  ($selected_location->loc_data['show_coord'] === 'on' ? 'checked' : '') : ''); ?>>
 		</p>
         
-        <p>
-		<label for="pre_load">Preload nearby places:</label> 
-		<input class="widefat" id="pre_load" name="pre_load" type="checkbox"  <?php echo($editing ?  ($selected_location->loc_data['pre_load'] === 'on' ? 'checked' : '') : ''); ?> >
-		</p>
 		
 		<input type="hidden" name="action" value="<?php echo($editing ? 'edit_location' : 'add_location' )?>">
 		<?php echo( $editing ? '<input type="hidden" name="id" value="'.$_GET['id'].'">' : ''); ?>
