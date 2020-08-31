@@ -1,19 +1,12 @@
 <?php
 
 function edit_location_submenu(){
-	// Add scripts for location picker
-	wp_register_script("google-api","http://maps.google.com/maps/api/js?sensor=false&libraries=places");
-	wp_register_script( 'wikinearby-locpicker', plugin_dir_url( __FILE__ ).'js/locationpicker.jquery.js' );
 	
-	
-	// Add style
-	wp_register_style( 'form_style', plugin_dir_url( __FILE__ ).'style/form_style.css' );
-	wp_enqueue_style( 'form_style' );
 	
 	// Check if it came from the edit link, if this is true initialize the fields to the given Location
 	$editing = false;
 	$selected_location = null;
-	if($_GET['id'] != 0) {
+	if(isset($_GET['id'])) {
 		$editing = true;
 		
 		$saved_locations = get_option('wikinearby_saved_locations');
@@ -25,11 +18,9 @@ function edit_location_submenu(){
 			'longitude' => $selected_location->loc_data['longitude']
 		);
 		wp_localize_script( 'wikinearby-locpicker', 'locData', $data_array );
-		
+		wp_enqueue_script('wikinearby-locpicker', plugin_dir_url( __FILE__ ).'js/locationpicker.jquery.js', array('locationpicker'));
 	}
 	
-	wp_enqueue_script("google-api");
-	wp_enqueue_script("wikinearby-locpicker");
 	
 	
 	?>

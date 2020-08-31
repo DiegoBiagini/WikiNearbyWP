@@ -31,8 +31,10 @@ $(document).ready(function() {
         }
         $holder.removeClass("active");
     });
+	
 
 });
+
 
 function calcDistance(lat1, lon1, lat2, lon2) {
     // Set all variables for the haversine forumla
@@ -91,7 +93,6 @@ function callWikiApi(position) {
 
         success: function(response) {
             var result = response["query"].geosearch;
-            console.log(result)
             var key_value = Object.keys(result);
             var title, image, coords, distance;
             var container, image_container, card_body, card_footer, carousel_active, carousel, divRow;
@@ -108,11 +109,9 @@ function callWikiApi(position) {
             if (Object.keys(result).length == 0) {
                 div.innerHTML += "The request retun 0 places.";
             }
-            console.log(Object.keys(result).length)
 
             var i = 0
             for (var r in result) {
-                console.log(result[r]);
                 var entry = result[i]
 
                 if ((i % 6) == 0) {
@@ -201,12 +200,10 @@ function callWikiApi(position) {
                         "format": "json"
                     },
                     success: function(response) {
-                        console.log(response["query"]);
                         entry = response["query"]["pages"];
                         entry = entry[Object.keys(entry)[0]]
                         if (entry.hasOwnProperty("thumbnail")) {
                             thumbnail = entry["thumbnail"]["source"]
-                            console.log(thumbnail)
                             this.image_element.setAttribute("src", thumbnail);
                         } else
                             this.image_element.setAttribute("src", plugin_path + "/assets/image.png");
@@ -221,10 +218,22 @@ function callWikiApi(position) {
             load_button.style.display = "none";
             // Transition in
             var $places_div = $("#wkn-nearby-place");
-
             $places_div.addClass("wkn-block").outerWidth();
             $places_div.addClass("wkn-fadein");
-
+			
+			$("#carousels").collapse("show");
+			
+			$('#wkn-collapse-btn').on('click', function() {
+				$fa_el = $(this).find("i");
+				if ($fa_el.hasClass("fa-caret-down")){
+					$fa_el.removeClass("fa-caret-down");
+					$fa_el.addClass("fa-caret-up");
+				}
+				else{
+					$fa_el.removeClass("fa-caret-up");
+					$fa_el.addClass("fa-caret-down");
+				}
+			});
         },
 
         error: function(error) {

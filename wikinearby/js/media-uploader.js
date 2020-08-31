@@ -22,17 +22,19 @@ jQuery(document).ready(function($){
 		mediaUploader.open();
 	});
 	
-	// Add location picker
-	$('#locpicker').locationpicker({
-		
-        location: {
-            latitude: typeof locData != "undefined" ? locData.latitude : 43.943966465658924,
-            longitude: typeof locData != "undefined" ? locData.longitude : 10.933070182800293
-        },
-        radius: 0,
-        inputBinding: {
-            latitudeInput: $('#latitude'),
-            longitudeInput: $('#longitude')
-        }
-    });
+	if($('#locpicker').locationpicker != null){
+		// Add location picker
+		$('#locpicker').locationpicker({
+			
+			location: {
+				latitude: typeof locData != "undefined" ? locData.latitude : 43.943966465658924,
+				longitude: typeof locData != "undefined" ? locData.longitude : 10.933070182800293
+			},
+			radius: 0,
+			inputBinding: {
+				latitudeInput: $('#latitude'),
+				longitudeInput: $('#longitude')
+			}
+		});
+	}
 });

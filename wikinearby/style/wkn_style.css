@@ -6,6 +6,7 @@
 
 #wkn-main-content-container {
     margin: 0 auto;
+	padding: 20px 0px;
 }
 
 
@@ -61,8 +62,8 @@
 	opacity: 0;
 	visibility:hidden;
 	transition: display 1s,visibility 1s, opacity 0.7s linear;
-
 }
+
 
 .wkn-fadein {
 	opacity:1 !important;
@@ -73,14 +74,28 @@
   display: block !important; 
 }
 
+#wkn-collapse-btn{
+	display:inline-block;
+	margin: 0 auto;
+	vertical-align:middle;
+	background-color:#f9f9f9;
+	color:inherit;
+	padding: 0 0.5rem;
+}
+
 #wkn-img-container img {
+
     border-radius: 50%;
     border: 2px solid #696969;
-    max-height: 150px;
+    height: 150px;
+	width:150px;
     display: block;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
 }
 
 #wkn-card-image img {
@@ -105,11 +120,11 @@
 #wkn-card-footer {
 	border-top: 1px solid #696969;
 	background-color: var(--primary-color, #0073aa);
-	color: white;
+	color: var(--primary-color-light, white);
 }
 
 #wkn-card-footer h5{
-	color:white;
+	color:var(--primary-color-light, white);
 }
 
 #wkn-postid-coords {
@@ -167,12 +182,13 @@ li#wkn-indicator.visited, li#wkn-indicator:hover {
 
 
 #wkn-card-title a{
-	color:black;
+	color:inherit;
 	text-decoration: none;
 }
 
 #wkn-card-title {
-	font-size: 2vw;
+	font-size: 2rem;
+	word-break: keep-all;
 }
 
 #wkn-card-title a:hover{

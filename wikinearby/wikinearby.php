@@ -3,7 +3,7 @@
  * Plugin Name:       WikiNearby
  * Plugin URI:        https://example.com
  * Description:       A widget that allows you to add a location to a post/page and see nearby historical places
- * Version:           0.3
+ * Version:           0.9
  * Requires PHP:      7.2
  * Author:            Dgbad & Chry
  * Author URI:        https://author.example.com/
@@ -89,24 +89,7 @@ class Location {
 	
 	//Used to display on front end
     public function display(){
-		wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'/style/wkn_style.css' );
-		wp_enqueue_style( 'wkn_style' );
 		
-		wp_register_style( 'fa_style', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" );
-		wp_enqueue_style("fa_style");
-		
-		wp_register_script('jquery_script', "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js");
-		wp_enqueue_script('jquery_script');
-		
-		wp_register_style( 'bs_style', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" );
-		wp_enqueue_style("bs_style");
-		
-		wp_register_script('bs_script', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js");
-		wp_enqueue_script("bs_script");
-
-		
-		wp_register_script( 'wikinearby-apicall', plugin_dir_url( __FILE__ ).'js/wikinearby-apicall.js' );
-
 		// Localize the script with new data
 		$data_array = array(
 			'latitude' => $this->loc_data['latitude'],
@@ -117,10 +100,7 @@ class Location {
 			
 		);
 		wp_localize_script( 'wikinearby-apicall', 'data', $data_array );
-	
-		// Enqueued script with localized data.
-		wp_enqueue_script( 'wikinearby-apicall' );
-		
+		wp_enqueue_script('wikinearby-apicall');
 		?>
         <div id="wkn-main-content-container">
             <div id="wkn-main-content-wrapper">
@@ -135,11 +115,11 @@ class Location {
 							Load Nearby Places
 						</button>
                         <div id="wkn-nearby-place">
-                            <h3 class="text-center"> Nearby Places</h3>
+                            <h3 class="text-center"> <button id="wkn-collapse-btn" type="button" data-toggle="collapse" data-target="#carousels">Nearby Places <i class="fa fa-caret-up fa-xs"></i></button></h3>
                             <div class="container-fluid">
 
                             <!-- PAGE CAROUSEL-CONTENT -->
-                            <div class="carousel slide" data-ride="carousel"  id="carousels" >
+                            <div class="carousel slide collapse in" data-ride="carousel"  id="carousels" >
                                 <div class="carousel-inner">
                                     <div class="container-fluid">
                                         <div id="wkn-nearby-wrap" class="row">
@@ -223,6 +203,51 @@ function wikinearby_deactivate(){
 function wikinearby_uninstall(){
 	delete_option("wikinearby_saved_locations");
 }
+
+//Register styles and scripts
+		
+add_action('init', 'register_styles_scripts');
+function register_styles_scripts(){
+	//Back end
+	wp_register_script("google-api","http://maps.google.com/maps/api/js?sensor=false&libraries=places");
+	wp_register_script( 'wikinearby-locpicker', plugin_dir_url( __FILE__ ).'js/locationpicker.jquery.js' );
+	
+	wp_register_style( 'form_style', plugin_dir_url( __FILE__ ).'style/form_style.css' );
+	
+	//Front end styles/scripts
+	wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'/style/wkn_style.css' );
+	wp_register_style( 'fa_style', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" );
+	wp_register_style( 'bs_style', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" );
+	
+	wp_register_script('jquery_script', "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js");
+	wp_register_script('bs_script', "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js");
+	
+	wp_register_script( 'wikinearby-apicall', plugin_dir_url( __FILE__ ).'js/wikinearby-apicall.js' );
+
+
+}
+
+add_action( 'wp_enqueue_scripts', 'enqueue_styles_scripts_frontend' );
+function enqueue_styles_scripts_frontend(){
+	
+	wp_enqueue_style('wkn_style');
+	wp_enqueue_style("fa_style");
+	wp_enqueue_style("bs_style");
+
+		
+	wp_enqueue_script('jquery_script');	
+	wp_enqueue_script("bs_script");
+
+}
+
+add_action( 'admin_enqueue_scripts', 'enqueue_styles_scripts_backend' );
+function enqueue_styles_scripts_backend(){
+	wp_enqueue_style( 'form_style' );
+	wp_enqueue_script("google-api");
+	
+}
+
+
 
 
 // Add menu
@@ -377,3 +402,4 @@ function wikinearby_render_shortcode($atts = [], $content = null, $tag = ''){
 
 // Then add the shortcode
 add_shortcode('wikinearby', 'wikinearby_render_shortcode');
+
