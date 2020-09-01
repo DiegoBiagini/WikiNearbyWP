@@ -96,6 +96,8 @@ class Location {
 			'longitude' => $this->loc_data['longitude'],
 			'km_range' => $this->loc_data['km_range'],
 			'show_coord' => empty($this->loc_data['show_coord']) ? 0 : 1,
+			'max_results' => $this->loc_data['max_results'],
+			'lang' => $this->loc_data['lang'],
 			'plugin_path' =>  plugin_dir_url( __FILE__ )
 			
 		);
@@ -111,9 +113,7 @@ class Location {
                         </div>
                         <h3>  <?php echo esc_html( $this->loc_data['loc_name']); ?></h3>
                         <h4 id="wkn-my-coords"></h4>
-						<button id="wkn-req-button" onClick='callWikiApi({"latitude": data.latitude, "longitude": data.longitude });'>
-							Load Nearby Places
-						</button>
+						<div id="wkn-req-load"></div>
                         <div id="wkn-nearby-place">
                             <h3 class="text-center"> <button id="wkn-collapse-btn" type="button" data-toggle="collapse" data-target="#carousels">Nearby Places <i class="fa fa-caret-up fa-xs"></i></button></h3>
                             <div class="container-fluid">

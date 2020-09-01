@@ -32,6 +32,8 @@ $(document).ready(function() {
         $holder.removeClass("active");
     });
 	
+	callWikiApi(lat,lon);
+	
 
 });
 
@@ -54,26 +56,20 @@ function calcDistance(lat1, lon1, lat2, lon2) {
 }
 
 
-function callWikiApi(position) {
+function callWikiApi(lat,lon) {
     //Variables passed through WP
     var km_range = data.km_range;
     var plugin_path = data.plugin_path
     var show_coord = data.show_coord;
+	var lang = data.lang;
+	var max_results = data.max_results;
 
-    var load_button = document.getElementById("wkn-req-button");
-    var places_div = document.getElementById("wkn-nearby-place");
-
-    load_button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var load_div = document.getElementById("wkn-req-load");
+    load_div.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
 
 
     var div = document.getElementById("wkn-nearby-wrap");
-
-    call = false;
-    lat = position.latitude;
-    lon = position.longitude;
-
-
-    var url = "https://en.wikipedia.org/w/api.php";
+    var url = "https://" + lang +".wikipedia.org/w/api.php";
 
     $.ajax({
         url: url,
@@ -83,11 +79,11 @@ function callWikiApi(position) {
         data: {
             "action": "query",
             "list": "geosearch",
-            "pithumbsize": 150,
             "gsradius": 1000 * km_range,
-            "gslimit": 12,
+            "gslimit": max_results,
             "gscoord": lat + "|" + lon,
-            "format": "json"
+            "format": "json",
+			"prop":"categories"
         },
 
 
@@ -175,7 +171,7 @@ function callWikiApi(position) {
                 card_container.appendChild(card_body);
                 card_container.appendChild(card_footer);
 
-                title.innerHTML += "<a href='https://en.wikipedia.org/wiki?curid=" + entry["pageid"] + "'>" + entry["title"] + "</a>";
+                title.innerHTML += "<a href='https://" + lang +".wikipedia.org/wiki?curid=" + entry["pageid"] + "'>" + entry["title"] + "</a>";
                 if (show_coord != false) {
                     shortened_lat = ("" + entry["lat"]).substring(0, 7)
                     shortened_lon = ("" + entry["lon"]).substring(0, 7)
@@ -215,7 +211,7 @@ function callWikiApi(position) {
 
                 i++;
             }
-            load_button.style.display = "none";
+            load_div.style.display = "none";
             // Transition in
             var $places_div = $("#wkn-nearby-place");
             $places_div.addClass("wkn-block").outerWidth();
@@ -238,7 +234,7 @@ function callWikiApi(position) {
 
         error: function(error) {
             console.log(error);
-            load_button.innerHTML("Unknown error during the request.");
+			load_div.innerHTML = "Unknown error during request";
         }
     });
 }
