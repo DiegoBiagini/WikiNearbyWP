@@ -1,1 +1,28 @@
 \section*{Front End}
+Il front end si occupa di costruire in modo dinamico tutta la pagina, in base a delle coordinate fornite dall'utente(proprietario del sito web).\\
+Abbiamo quindi realizzato una pagina .html ed un file javascript che permette di costruire parte della pagina html in modo dinamico.
+\subsection*{Realizzazione pagina statica}
+In questa fase abbiamo realizzato la grafica della pagina basandoci sul mockup del progetto e integrandone le classi css di bootstrap, per sfruttare 
+l'adattamento della pagina (page responsive).\\ 
+SCREEN MOKUP(AGGIORNATO)
+\subsection*{Ottenimento informazioni dall'API} 
+L'obiettivo principale di questa fase consiste nell'ottenere in base a delle coordinate, passate dal nostro plugin wordpress, dei luoghi suggeriteci dall'API di Wikipedia.\\
+Per eseguire questo tipo di azione abbiamo effettuato una chiamata all'API mediante l'utilizzo di jquery.
+La struttura della chiamata è composta dai seguenti parametri:
+\begin{itemize}
+\item \texttt{"action": "query"} modulo che serve per recuperare dei dati dall'API;
+\item \texttt{"prop": "coordinates|pageimages|description"} ci permette di specificare di quali informazioni abbiamo bisogno;
+\item \texttt{"pithumbsize": 150} dimensione dell'immagine che ci restituirà l'API;
+\item \texttt{"generator": "geosearch"} generatore usato per ottenere dei risultati di ricerca per un dato insieme di pagine.
+\item \texttt{"ggslimit": "12"} specifica di quanti luoghi la risposta sarà formata;
+\item \texttt{"ggscoord":  positions.latitude + "|" + positions.longitude} indica le coordinate che passiamo all'API.
+\item \texttt{"format": "json"} specifica che vogliamo una riposta di tipo JSON.
+\end{itemize}
+\subsection*{Costruzione pagina dinamica} 
+Qualora la ricerca effettuata sul servizio di Wikipedia restituisca esito negativo, verrà mostrato il seguente messaggio di errore: \texttt{"Unknown error during the request"}.\\
+Qualora invece, la ricerca restituisca esito positivo, otterremo un JSON con tutte le varie informazioni dei luoghi correlati alla posizione scelta dall'utente (proprietario del sito web).\\
+La risposta ottenuta è composta da vari vettori JSON.\\
+Questi verranno scomposti in modo da ottenere le informazioni che andremo ad aggiungere all'interno del "card-layout" (costruito dinamicamente).\\
+A questo punto, il "card-layout" verrà inserito all'interno del carosello bootstrap per consentire una migliore visualizzazione e ottimizzazione della pagina.\\
+\subsection*{Funzione Haversine}
+La funzione Harvesine, detta anche 'formula dell'emisenoverso', serve per ottenere la distanza in km dal punto di coordinate passato da backend, a quello ottenuto dall'API.

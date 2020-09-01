@@ -214,6 +214,9 @@ function register_styles_scripts(){
 	
 	wp_register_style( 'form_style', plugin_dir_url( __FILE__ ).'style/form_style.css' );
 	
+	wp_register_script('media-uploader', plugins_url('js/media-uploader.js' , __FILE__ ), array('jquery'));
+
+	
 	//Front end styles/scripts
 	wp_register_style( 'wkn_style', plugin_dir_url( __FILE__ ).'/style/wkn_style.css' );
 	wp_register_style( 'fa_style', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" );
@@ -245,9 +248,10 @@ function enqueue_styles_scripts_backend(){
 	wp_enqueue_style( 'form_style' );
 	wp_enqueue_script("google-api");
 	
+	wp_enqueue_media();	
+    wp_enqueue_script('media-uploader');
+	
 }
-
-
 
 
 // Add menu
@@ -262,7 +266,6 @@ function wikinearby_menu_page(){
         'wikinearby-menu',
         'wikinearby_menu',
 		plugin_dir_url(__FILE__ ).'assets/icon.png'
-		
     );
     add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location', 'manage_options', 'edit-location-submenu', 'edit_location_submenu');
 }
@@ -356,16 +359,6 @@ function wikinearby_delete_all_locations(){
 
 add_action('admin_post_delete_all', 'wikinearby_delete_all_locations');
 
-
-//Register media uploader
-
-function media_uploader_enqueue() {
-    	wp_enqueue_media();
-    	wp_register_script('media-uploader', plugins_url('js/media-uploader.js' , __FILE__ ), array('jquery'));
-    	wp_enqueue_script('media-uploader');
-}
-    
-add_action('admin_enqueue_scripts', 'media_uploader_enqueue');
 
 
 // Render shortcode to post/page

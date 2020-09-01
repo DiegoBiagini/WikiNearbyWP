@@ -11,8 +11,8 @@ Per gestire la collezione viene registrato un id progressivo, \texttt{\$prog\_id
 \end{itemize}
 Per registrare effettivamente questi dati sul database Wordpress è stata usata la Options API \cite{options}, in particolare le funzioni \texttt{add\_option( option\_name , object)}, \texttt{remove\_option(option\_name)}, \texttt{update\_option(option\_name , object)}, per aggiungere, rimuovere, aggiornare un dato, mentre la funzione \texttt{get\_option(option\_name)} per leggerlo.
 \subsection*{Plugin Setup}
-Uno dei primi accorgimenti da prendere quando viene scritto un plugin Wordpress è quello di scrivere i metodi necessari alla sua attivazion/disattivazione e e successivamente registrarvi l'hook \cite{hooks} appropriato.\\\\
-Nel nostro caso  vogliamo che quando il plugin è attivato, se non è presente l'oggetto \texttt{Saved\_Locations} nel database allora esso sarà aggiunto. \\
+Uno dei primi accorgimenti da prendere quando viene scritto un plugin Wordpress è quello di scrivere i metodi necessari alla sua attivazion/disattivazione e e successivamente registrarvi l'hook appropriato.\\\\
+Nel nostro caso  vogliamo che all'attivazione del plugin, se non è presente l'oggetto \texttt{Saved\_Locations} nel database allora ne sarà creato uno e sarà aggiunto. \\
 Inoltre se l'utente decide di disinstallare il plugin sarà necessario rimuovere questo dato dalla memoria.\\
 \begin{lstlisting}
 register_activation_hook( __FILE__, 'wikinearby_activate' );
@@ -38,20 +38,36 @@ function wikinearby_uninstall(){
 }
 \end{lstlisting}
 
+Un'altra azione da intraprendere nel setup è quella di registrare i fogli css e gli script javascript che saranno usati dall'applicativo, sia da parte del back end php sia dal front end HTML. Questo è associato all'hook di inizializzazione.
+\begin{lstlisting}
+add_action('init', 'register_styles_scripts');
+\end{lstlisting}
+
+Una volta registrati, questi dovranno essere forniti all'applicazione nel momento opportuno
+\begin{lstlisting}
+add_action( 'wp_enqueue_scripts', 'enqueue_styles_scripts_frontend' );
+
+add_action( 'admin_enqueue_scripts', 'enqueue_styles_scripts_backend' );
+\end{lstlisting}
 \subsection*{Menu pages}
-L'interfaccia utente principale del plugin è offerta tramite i cosiddetti menu\cite{menus}, aggiunti nel seguente modo.\\
+L'interfaccia utente principale del plugin è offerta tramite i  menu\cite{menus}, aggiunti nel seguente modo.\\
 \begin{lstlisting}
 add_action( 'admin_menu', 'wikinearby_menu_page' );
 
 function wikinearby_menu_page(){
-    add_menu_page('WikiNearby','WikiNearby','manage_options','wikinearby-menu',
-    'wikinearby_menu',plugin_dir_url(__FILE__ ).'assets/icon.png');
-    add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location',
-     'manage_options', 'edit-location-submenu', 'edit_location_submenu');
+    add_menu_page(
+        'WikiNearby',
+        'WikiNearby',
+        'manage_options',
+        'wikinearby-menu',
+        'wikinearby_menu',
+		plugin_dir_url(__FILE__ ).'assets/icon.png'
+    );
+    add_submenu_page( 'wikinearby-menu', 'Add new location', 'Add new location', 'manage_options', 'edit-location-submenu', 'edit_location_submenu');
 }
 \end{lstlisting}
 Le funzioni che mostrano i due menu sono state scritte nei file \texttt{menu.php} e \\ \texttt{edit\_location\_submenu.php}.\\ \\
-Il menu principale si occupa solamente di leggere le \texttt{Location} memorizzate e mostrare una tabella corrispondente ad esse( col metodo di \texttt{Saved\_Locations} appropriato), rendendo possibile la modifica e eliminazione di singoli luoghi.\\
+Il menu principale si occupa solamente di leggere le \texttt{Location} memorizzate e mostrare una tabella corrispondente ad esse( col metodo di \texttt{Saved\_Locations} appropriato), rendendo possibile la modifica e eliminazione di singoli luoghi o di tutti.\\
 Il menu secondario invece viene usato quando l'utente ha la necessità di aggiungere o modificare una \texttt{Location}.\\
 Esso offre un form in cui è possibile inserire i dati di un nuovo luogo, in particolare è anche possibile aggiungere le coordinate individuandole con una mappa( il file javascript corrispondente fa uso del plugin JQuery locationpicker \cite{locpicker}).\\\\
 Questa pagina viene usata anche per modificare un luogo inserito precedentemente, per far questo deve essere inviata una richiesta GET con l'id del luogo da modificare come parametro(queste richieste sono normalmente eseguite premendo il bottone modifica di fianco a un luogo, nel menu principale).\\
